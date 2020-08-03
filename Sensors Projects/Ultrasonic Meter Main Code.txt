@@ -1,0 +1,56 @@
+/* ========================================
+ *
+ * Copyright YOUR COMPANY, THE YEAR
+ * All Rights Reserved
+ * UNPUBLISHED, LICENSED SOFTWARE.
+ *
+ * CONFIDENTIAL AND PROPRIETARY INFORMATION
+ * WHICH IS THE PROPERTY OF your company.
+ *
+ * ========================================
+*/
+#include "project.h"
+
+//Initialization of Global Variables
+uint16 count;
+float distance;
+int readings;
+float measurements[10];
+int ready=1;
+
+//Initialization of Interrupt Service Routines
+CY_ISR(Timer_Handler){
+    Timer_ReadStatusRegister();
+}
+
+int main(void)
+{
+    CyGlobalIntEnable;
+
+    //Initialization of Components
+    Comp_Start();
+    LED_Display_Start();
+    Timer_Start();
+    timer_isr_StartEx(Timer_Handler);
+    
+    //Initialization of Variables
+    int start=0;
+    
+    for(;;)
+    {   
+        if(!Reset&&start==0){
+            CyDelay(100);
+            if(!Reset&&start==0){
+                start=1;
+                Counter_Start();
+            }
+        }
+        if(start&&ready){
+            Counter_Stop();
+            CyDelay(100);
+            Counter_Start();
+        }
+    }
+}
+
+/* [] END OF FILE */
